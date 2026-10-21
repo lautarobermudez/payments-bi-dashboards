@@ -1,0 +1,11 @@
+model Model
+	culture: es-AR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	discourageImplicitMeasures
+	sourceQueryCulture: es-AR
+
+ref table OPs
+ref table Calendario
+ref table Parametros
+ref table 'Top N'
+ref table Centros

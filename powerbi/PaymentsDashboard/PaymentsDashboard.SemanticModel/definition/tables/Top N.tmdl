@@ -1,0 +1,15 @@
+table 'Top N'
+
+	/// Cantidad de proveedores que muestra el Pareto (por defecto 10; igual al parametro de Tableau)
+	measure 'Top N valor' = SELECTEDVALUE('Top N'[Top N], 10)
+		formatString: 0
+
+	column 'Top N'
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: [Value]
+
+	partition 'Top N' = calculated
+		mode: import
+		source = GENERATESERIES(5, 30, 1)

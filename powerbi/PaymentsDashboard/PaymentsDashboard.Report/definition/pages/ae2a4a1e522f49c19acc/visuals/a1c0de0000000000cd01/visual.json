@@ -1,0 +1,104 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "a1c0de0000000000cd01",
+  "position": {
+    "x": 24,
+    "y": 16,
+    "z": 1000,
+    "height": 120,
+    "width": 1232,
+    "tabOrder": 1000
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Gasto neto"
+                }
+              },
+              "queryRef": "OPs.Gasto neto",
+              "nativeQueryRef": "Gasto neto"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Importe pendiente"
+                }
+              },
+              "queryRef": "OPs.Importe pendiente",
+              "nativeQueryRef": "Importe pendiente"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Importe vencido"
+                }
+              },
+              "queryRef": "OPs.Importe vencido",
+              "nativeQueryRef": "Importe vencido"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Cantidad de OPs"
+                }
+              },
+              "queryRef": "OPs.Cantidad de OPs",
+              "nativeQueryRef": "Cantidad de OPs"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "value": [
+        {
+          "properties": {
+            "labelDisplayUnits": {
+              "expr": {
+                "Literal": {
+                  "Value": "1D"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "20D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ]
+    }
+  }
+}

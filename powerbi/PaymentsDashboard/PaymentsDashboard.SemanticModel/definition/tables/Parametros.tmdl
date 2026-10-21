@@ -1,0 +1,15 @@
+table Parametros
+
+	/// Fecha de corte del tablero (reemplaza a TODAY() para que sea reproducible; igual al parametro de Tableau)
+	measure 'Fecha de corte' = MAX(Parametros[Corte])
+		formatString: dd/mm/yyyy
+
+	column Corte
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: [Corte]
+
+	partition Parametros = calculated
+		mode: import
+		source = ROW("Corte", DATE(2026, 10, 20))

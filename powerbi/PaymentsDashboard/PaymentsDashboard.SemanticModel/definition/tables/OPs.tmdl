@@ -1,0 +1,226 @@
+table OPs
+
+	/// Suma del importe de las OPs no anuladas
+	measure 'Gasto neto' = ```
+			CALCULATE(SUM(OPs[importe_total]), OPs[estado] <> "anulada")
+			```
+		formatString: #,##0
+
+	/// Importe de las OPs en estado pendiente
+	measure 'Importe pendiente' = ```
+			CALCULATE(SUM(OPs[importe_total]), OPs[estado] = "pendiente")
+			```
+		formatString: #,##0
+
+	/// Pendiente cuyo vencimiento es anterior a la fecha de corte
+	measure 'Importe vencido' = ```
+			CALCULATE([Importe pendiente], OPs[Situación] = "Vencida")
+			```
+		formatString: #,##0
+
+	/// Cantidad de OPs no anuladas
+	measure 'Cantidad de OPs' = ```
+			CALCULATE(DISTINCTCOUNT(OPs[op_id]), OPs[estado] <> "anulada")
+			```
+		formatString: #,##0
+
+	/// Gasto neto por OP (equivale al LOD de Tableau)
+	measure 'Ticket promedio' = ```
+			DIVIDE([Gasto neto], [Cantidad de OPs])
+			```
+		formatString: #,##0
+
+	/// Participacion de cada empresa/segmento en el gasto de su empresa (ignora el resto de los filtros salvo empresa)
+	measure '% del gasto de la empresa' = ```
+			DIVIDE(
+			    [Gasto neto],
+			    CALCULATE([Gasto neto], VALUES(OPs[empresa]), REMOVEFILTERS(OPs), REMOVEFILTERS(Calendario))
+			)
+			```
+		formatString: 0.0%
+
+	/// Promedio del gasto neto de los ultimos 3 meses (al inicio de la serie promedia los meses disponibles)
+	measure 'Promedio móvil 3 meses' = ```
+			VAR ultimo = MAX(Calendario[Fecha])
+			VAR desde = EDATE(DATE(YEAR(ultimo), MONTH(ultimo), 1), -2)
+			VAR rango = DATESBETWEEN(Calendario[Fecha], desde, ultimo)
+			RETURN
+			    DIVIDE(
+			        CALCULATE([Gasto neto], rango),
+			        CALCULATE(DISTINCTCOUNT(Calendario[Mes]), rango)
+			    )
+			```
+		formatString: #,##0
+
+	/// Gasto neto del mes anterior
+	measure 'Gasto mes anterior' = ```
+			CALCULATE([Gasto neto], DATEADD(Calendario[Fecha], -1, MONTH))
+			```
+		formatString: #,##0
+
+	/// Variacion porcentual del gasto neto contra el mes anterior
+	measure 'Variación vs mes anterior' = ```
+			VAR actual = [Gasto neto]
+			VAR previo = [Gasto mes anterior]
+			RETURN
+			    IF(ISBLANK(previo), BLANK(), DIVIDE(actual - previo, ABS(previo)))
+			```
+		formatString: 0.0%
+
+	/// Posicion del proveedor segun el gasto neto, respetando los filtros elegidos (empresa, etc.)
+	measure 'Ranking proveedor' = ```
+			IF(
+			    HASONEVALUE(OPs[proveedor]),
+			    RANKX(ALLSELECTED(OPs[proveedor]), [Gasto neto], , DESC, DENSE)
+			)
+			```
+		formatString: 0
+
+	/// Gasto neto solo de los N primeros proveedores (N = parametro Top N)
+	measure 'Gasto neto Top N' = ```
+			IF([Ranking proveedor] <= [Top N valor], [Gasto neto])
+			```
+		formatString: #,##0
+
+	/// Porcentaje acumulado del gasto dentro de los N primeros proveedores (llega a 100% en el ultimo), como el RUNNING_SUM/TOTAL de Tableau
+	measure '% acumulado Pareto' = ```
+			VAR r = [Ranking proveedor]
+			VAR n = [Top N valor]
+			VAR proveedoresTop = FILTER(ALLSELECTED(OPs[proveedor]), [Ranking proveedor] <= n)
+			RETURN
+			    IF(
+			        r <= n,
+			        DIVIDE(
+			            SUMX(FILTER(proveedoresTop, [Ranking proveedor] <= r), [Gasto neto]),
+			            SUMX(proveedoresTop, [Gasto neto])
+			        )
+			    )
+			```
+		formatString: 0.0%
+
+	column op_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: op_id
+
+	column empresa
+		dataType: string
+		summarizeBy: none
+		sourceColumn: empresa
+
+	column nro_op
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: nro_op
+
+	column fecha_op
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: fecha_op
+
+	column mes
+		dataType: dateTime
+		isHidden
+		formatString: mmm yyyy
+		summarizeBy: none
+		sourceColumn: mes
+
+	column anio
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: anio
+
+	column proveedor
+		dataType: string
+		summarizeBy: none
+		sourceColumn: proveedor
+
+	column estado
+		dataType: string
+		summarizeBy: none
+		sourceColumn: estado
+
+	column forma_pago
+		dataType: string
+		summarizeBy: none
+		sourceColumn: forma_pago
+
+	column condicion_pago
+		dataType: string
+		summarizeBy: none
+		sourceColumn: condicion_pago
+
+	column importe_total
+		dataType: double
+		isHidden
+		formatString: #,##0.00
+		summarizeBy: none
+		sourceColumn: importe_total
+
+	column fecha_pago
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: fecha_pago
+
+	column dias_pendiente
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: dias_pendiente
+
+	column fecha_vencimiento
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: fecha_vencimiento
+
+	column renglones
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: renglones
+
+	column Situación = ```
+			IF(
+			    OPs[estado] <> "pendiente", "No pendiente",
+			    IF(
+			        ISBLANK(OPs[fecha_vencimiento]), "Sin vencimiento",
+			        IF(
+			            OPs[fecha_vencimiento] < [Fecha de corte], "Vencida",
+			            IF(OPs[fecha_vencimiento] = [Fecha de corte], "Vence hoy", "A vencer")
+			        )
+			    )
+			)
+			```
+		dataType: string
+		summarizeBy: none
+
+	column 'Días de atraso' = ```
+			IF(OPs[Situación] = "Vencida", DATEDIFF(OPs[fecha_vencimiento], [Fecha de corte], DAY))
+			```
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+
+	/// Vencimiento como texto dd/mm/aaaa (para la tabla del tablero)
+	column Vencimiento = ```
+			FORMAT(OPs[fecha_vencimiento], "dd/mm/yyyy")
+			```
+		dataType: string
+		summarizeBy: none
+
+	partition OPs = m
+		mode: import
+		source =
+			let
+			    Origen = PostgreSQL.Database("localhost:5432", "payments"),
+			    v_ops = Origen{[Schema="bi", Item="v_ops"]}[Data]
+			in
+			    v_ops

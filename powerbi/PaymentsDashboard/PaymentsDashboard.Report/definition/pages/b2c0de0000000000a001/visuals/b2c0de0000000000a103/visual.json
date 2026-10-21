@@ -1,0 +1,131 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "b2c0de0000000000a103",
+  "position": {
+    "x": 24,
+    "y": 112,
+    "z": 3000,
+    "height": 584,
+    "width": 1232,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "lineClusteredColumnComboChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "proveedor"
+                }
+              },
+              "queryRef": "OPs.proveedor",
+              "nativeQueryRef": "proveedor",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Gasto neto Top N"
+                }
+              },
+              "queryRef": "OPs.Gasto neto Top N",
+              "nativeQueryRef": "Gasto neto Top N"
+            }
+          ]
+        },
+        "Y2": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "% acumulado Pareto"
+                }
+              },
+              "queryRef": "OPs.% acumulado Pareto",
+              "nativeQueryRef": "% acumulado Pareto"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Ranking proveedor"
+                }
+              },
+              "queryRef": "OPs.Ranking proveedor",
+              "nativeQueryRef": "Ranking proveedor"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "OPs"
+                  }
+                },
+                "Property": "Gasto neto Top N"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Pareto de proveedores: gasto neto y % acumulado'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

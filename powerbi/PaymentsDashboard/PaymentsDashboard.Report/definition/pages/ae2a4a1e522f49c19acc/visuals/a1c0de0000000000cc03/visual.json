@@ -1,0 +1,128 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "a1c0de0000000000cc03",
+  "position": {
+    "x": 640,
+    "y": 152,
+    "z": 3000,
+    "height": 544,
+    "width": 616,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "lineClusteredColumnComboChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Calendario"
+                    }
+                  },
+                  "Property": "Mes"
+                }
+              },
+              "queryRef": "Calendario.Mes",
+              "nativeQueryRef": "Mes",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Gasto neto"
+                }
+              },
+              "queryRef": "OPs.Gasto neto",
+              "nativeQueryRef": "Gasto neto"
+            }
+          ]
+        },
+        "Y2": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Promedio móvil 3 meses"
+                }
+              },
+              "queryRef": "OPs.Promedio móvil 3 meses",
+              "nativeQueryRef": "Promedio móvil 3 meses"
+            }
+          ]
+        },
+        "Tooltips": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Variación vs mes anterior"
+                }
+              },
+              "queryRef": "OPs.Variación vs mes anterior",
+              "nativeQueryRef": "Variación vs mes anterior"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "OPs"
+                    }
+                  },
+                  "Property": "Gasto mes anterior"
+                }
+              },
+              "queryRef": "OPs.Gasto mes anterior",
+              "nativeQueryRef": "Gasto mes anterior"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Gasto neto mensual y promedio móvil de 3 meses'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

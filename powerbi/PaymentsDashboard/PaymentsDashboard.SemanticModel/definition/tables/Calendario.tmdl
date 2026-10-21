@@ -1,0 +1,23 @@
+table Calendario
+	dataCategory: Time
+
+	column Fecha
+		dataType: dateTime
+		isKey
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: [Date]
+
+	column Mes = DATE(YEAR(Calendario[Fecha]), MONTH(Calendario[Fecha]), 1)
+		dataType: dateTime
+		formatString: mmm yyyy
+		summarizeBy: none
+
+	column Año = YEAR(Calendario[Fecha])
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+
+	partition Calendario = calculated
+		mode: import
+		source = CALENDAR(DATE(2026, 1, 1), DATE(2026, 12, 31))

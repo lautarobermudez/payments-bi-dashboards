@@ -1,0 +1,119 @@
+table Centros
+
+	/// Gasto por centro de costo: importe de los renglones de OPs no anuladas
+	measure 'Gasto por centro' = ```
+			CALCULATE(SUM(Centros[importe]), Centros[estado] <> "anulada")
+			```
+		formatString: #,##0
+
+	/// Cantidad de OPs no anuladas que tienen renglones en el centro elegido
+	measure 'OPs por centro' = ```
+			CALCULATE(DISTINCTCOUNT(Centros[orden_pago_id]), Centros[estado] <> "anulada")
+			```
+		formatString: #,##0
+
+	/// Gasto por centro dividido las OPs del centro
+	measure 'Ticket por OP' = ```
+			DIVIDE([Gasto por centro], [OPs por centro])
+			```
+		formatString: #,##0
+
+	/// Participacion del centro (o del proveedor dentro del centro) sobre el total del contexto
+	measure '% del total' = ```
+			DIVIDE([Gasto por centro], CALCULATE([Gasto por centro], REMOVEFILTERS(Centros[centro_costo]), REMOVEFILTERS(Centros[proveedor])))
+			```
+		formatString: 0.0%
+
+	/// Participacion del proveedor dentro de su centro de costo
+	measure '% del centro' = ```
+			DIVIDE([Gasto por centro], CALCULATE([Gasto por centro], REMOVEFILTERS(Centros[proveedor])))
+			```
+		formatString: 0.0%
+
+	/// Gasto que todavia no tiene centro de costo
+	measure 'Gasto sin asignar' = ```
+			CALCULATE([Gasto por centro], Centros[centro_costo] = "Sin asignar")
+			```
+		formatString: #,##0
+
+	/// Porcentaje del gasto que todavia no tiene centro (cobertura de la clasificacion)
+	measure '% sin asignar' = ```
+			DIVIDE([Gasto sin asignar], CALCULATE([Gasto por centro], REMOVEFILTERS(Centros[centro_costo])), 0)
+			```
+		formatString: 0.0%
+
+	column orden_pago_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: orden_pago_id
+
+	column empresa
+		dataType: string
+		isHidden
+		summarizeBy: none
+		sourceColumn: empresa
+
+	column centro_costo
+		dataType: string
+		summarizeBy: none
+		sourceColumn: centro_costo
+
+	column nro_op
+		dataType: int64
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: nro_op
+
+	column fecha_op
+		dataType: dateTime
+		isHidden
+		formatString: dd/mm/yyyy
+		summarizeBy: none
+		sourceColumn: fecha_op
+
+	column mes
+		dataType: dateTime
+		isHidden
+		formatString: mmm yyyy
+		summarizeBy: none
+		sourceColumn: mes
+
+	column proveedor
+		dataType: string
+		summarizeBy: none
+		sourceColumn: proveedor
+
+	column estado
+		dataType: string
+		summarizeBy: none
+		sourceColumn: estado
+
+	column renglon
+		dataType: int64
+		isHidden
+		formatString: 0
+		summarizeBy: none
+		sourceColumn: renglon
+
+	column concepto
+		dataType: string
+		summarizeBy: none
+		sourceColumn: concepto
+
+	column importe
+		dataType: double
+		isHidden
+		formatString: #,##0.00
+		summarizeBy: none
+		sourceColumn: importe
+
+	partition Centros = m
+		mode: import
+		source =
+			let
+			    Origen = PostgreSQL.Database("localhost:5432", "payments"),
+			    v_ops_centro_costo = Origen{[Schema="bi", Item="v_ops_centro_costo"]}[Data]
+			in
+			    v_ops_centro_costo

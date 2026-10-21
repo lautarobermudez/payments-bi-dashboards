@@ -1,0 +1,7 @@
+relationship OPs_fecha_op_Calendario
+	fromColumn: OPs.fecha_op
+	toColumn: Calendario.Fecha
+
+relationship OPs_op_id_Centros
+	fromColumn: Centros.orden_pago_id
+	toColumn: OPs.op_id
