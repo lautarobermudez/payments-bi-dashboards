@@ -1,8 +1,8 @@
 # payments-bi-dashboards
 
-The same payments dashboard built twice, in **Tableau** and **Power BI**, on top of the `bi` views of [payments-data-platform](https://github.com/lautarobermudez/payments-data-platform). All data is synthetic.
+A payments dashboard built in **Power BI** and **Tableau** on top of the `bi` views of [payments-data-platform](https://github.com/lautarobermudez/payments-data-platform). All data is synthetic.
 
-The goal was to compare the two tools on one identical job (spend by month, supplier ranking, pending payables, cost centres) and to learn how far an AI coding agent can drive each of them.
+It covers spend by month, supplier ranking (Pareto), pending and overdue payables, and spend by cost centre, with the same figures checked against SQL in both tools.
 
 ## What is in the repository
 
@@ -12,7 +12,6 @@ The goal was to compare the two tools on one identical job (spend by month, supp
 | `tableau/payments_dashboard.twbx` | Packaged Tableau workbook with its CSV and a `.hyper` extract. |
 | `data/` | The `bi.v_ops` view exported to CSV (decimal point and decimal comma). |
 | `scripts/export_bi_views.py` | Exports `bi.v_ops` from PostgreSQL to CSV and, optionally, to a Tableau extract. |
-| `docs/COMPARISON.md` | What worked, what did not, and an honest comparison of both tools. |
 
 ## Screenshots
 
@@ -47,8 +46,7 @@ python scripts/export_bi_views.py
 ## Notes
 
 - Labels, measure names and page titles are in Spanish, as in the original work for Spanish-speaking users.
-- **How it was built:** I defined the dashboard and the metrics, and worked with Claude Code as an agent that edited the Power BI project files and, for Tableau, drove a community MCP server that edits workbook XML. I checked every figure against SQL. The findings about what the agents can and cannot do are in [docs/COMPARISON.md](docs/COMPARISON.md).
-- A timed comparison is not included (see the note in the comparison document).
+- **How it was built:** I defined the dashboard and the metrics, and worked with Claude Code as an agent that edited the Power BI project files and, for Tableau, drove a community MCP server that edits workbook XML. I checked every figure against SQL.
 
 ## License
 
