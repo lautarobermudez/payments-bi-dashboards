@@ -2,6 +2,8 @@
 
 A payments dashboard built in **Power BI** and **Tableau** on top of the `bi` views of [payments-data-platform](https://github.com/lautarobermudez/payments-data-platform). All data is synthetic.
 
+I first built these dashboards on the real payments database of a group of companies, to follow spend, suppliers and overdue payables. This repository is a clean version on fictitious data.
+
 It covers spend by month, supplier ranking (Pareto), pending and overdue payables, and spend by cost centre, with the same figures checked against SQL in both tools.
 
 ## What is in the repository
